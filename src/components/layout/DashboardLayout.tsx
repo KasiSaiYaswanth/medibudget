@@ -42,6 +42,19 @@ const DashboardLayout = ({ children }: Props) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Generate daily tips & checkup reminders on mount
+  useEffect(() => {
+    generateDailyHealthTip();
+    generateCheckupReminder();
+    setUnreadCount(getUnreadCount());
+  }, []);
+
+  const handleUnreadChange = useCallback((count: number) => {
+    setUnreadCount(count);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
