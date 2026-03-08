@@ -15,7 +15,9 @@ import {
   Thermometer,
   Brain,
   Stethoscope,
+  Mic,
 } from "lucide-react";
+import VoiceInputButton from "@/components/voice/VoiceInputButton";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import DashboardLayout from "@/components/layout/DashboardLayout";
