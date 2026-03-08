@@ -128,6 +128,7 @@ const SymptomChecker = () => {
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
     const userMsg: Message = { role: "user", content: text.trim() };
+    checkEmergency(text.trim());
     const updated = [...messages, userMsg];
     setMessages(updated);
     setInput("");
