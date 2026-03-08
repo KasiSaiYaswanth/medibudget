@@ -1,1 +1,4 @@
 project_id = "fmpcowmtdphciyveeahd"
+
+[functions.symptom-chat]
+verify_jwt = false
