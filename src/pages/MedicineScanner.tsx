@@ -197,6 +197,9 @@ const MedicineScanner = () => {
                       )}
                     </CardContent>
                   </Card>
+
+                  {/* Symptom-Based Medicine Guide */}
+                  <SymptomMedicineGuide onMedicineSearch={handleSearchFromScan} />
                 </div>
 
                 {/* Detail Panel */}
