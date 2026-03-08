@@ -1,21 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { Pill, Mail, Lock, ArrowRight } from "lucide-react";
+import { Pill, Mail, Lock, ArrowRight, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { checkIsAdmin } from "@/lib/adminService";
+
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
+function getLoginState() {
+  const stored = localStorage.getItem("login_rate_limit");
+  if (!stored) return { attempts: 0, lockedUntil: 0 };
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return { attempts: 0, lockedUntil: 0 };
+  }
+}
+
+function setLoginState(attempts: number, lockedUntil: number) {
+  localStorage.setItem("login_rate_limit", JSON.stringify({ attempts, lockedUntil }));
+}
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState(0);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const navigate = useNavigate();
+
+  // Load persisted state on mount
+  useEffect(() => {
+    const state = getLoginState();
+    setFailedAttempts(state.attempts);
+    setLockedUntil(state.lockedUntil);
+  }, []);
+
+  // Countdown timer during lockout
+  useEffect(() => {
+    if (lockedUntil <= Date.now()) {
+      setRemainingSeconds(0);
+      return;
+    }
+    const update = () => {
+      const diff = Math.max(0, Math.ceil((lockedUntil - Date.now()) / 1000));
+      setRemainingSeconds(diff);
+      if (diff <= 0) {
+        setFailedAttempts(0);
+        setLockedUntil(0);
+        setLoginState(0, 0);
+      }
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [lockedUntil]);
+
+  const isLocked = lockedUntil > Date.now();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLocked) {
+      toast.error(`Account locked. Try again in ${Math.ceil(remainingSeconds / 60)} minute(s).`);
+      return;
+    }
     if (!email.trim() || !password.trim()) {
       toast.error("Please fill in all fields");
       return;
@@ -24,11 +77,26 @@ const Login = () => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setLoading(false);
-      toast.error("Invalid email or password.");
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+
+      if (newAttempts >= MAX_ATTEMPTS) {
+        const lockTime = Date.now() + LOCKOUT_DURATION;
+        setLockedUntil(lockTime);
+        setLoginState(newAttempts, lockTime);
+        toast.error(`Too many failed attempts. Account locked for 15 minutes.`);
+      } else {
+        setLoginState(newAttempts, 0);
+        toast.error(`Invalid email or password. ${MAX_ATTEMPTS - newAttempts} attempt(s) remaining.`);
+      }
       return;
     }
 
-    // Check if user is admin and redirect accordingly
+    // Success — reset rate limit
+    setFailedAttempts(0);
+    setLockedUntil(0);
+    setLoginState(0, 0);
+
     const isAdmin = await checkIsAdmin();
     setLoading(false);
 
@@ -85,8 +153,21 @@ const Login = () => {
                 Forgot password?
               </Link>
             </div>
-            <Button variant="hero" className="w-full" type="submit" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"} <ArrowRight className="h-4 w-4 ml-1" />
+            {isLocked && (
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                <ShieldAlert className="h-4 w-4 text-destructive shrink-0" />
+                <p className="text-sm text-destructive">
+                  Too many failed attempts. Try again in {Math.floor(remainingSeconds / 60)}:{String(remainingSeconds % 60).padStart(2, "0")}
+                </p>
+              </div>
+            )}
+            {!isLocked && failedAttempts > 0 && (
+              <p className="text-sm text-destructive text-center">
+                {MAX_ATTEMPTS - failedAttempts} attempt(s) remaining before lockout
+              </p>
+            )}
+            <Button variant="hero" className="w-full" type="submit" disabled={loading || isLocked}>
+              {loading ? "Signing in..." : isLocked ? "Account Locked" : "Sign In"} {!isLocked && <ArrowRight className="h-4 w-4 ml-1" />}
             </Button>
           </form>
           <p className="text-center text-sm text-muted-foreground mt-6">
