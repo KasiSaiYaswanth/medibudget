@@ -12,6 +12,7 @@ import CostEstimation from "./pages/CostEstimation";
 import SchemeChecker from "./pages/SchemeChecker";
 import EstimationHistory from "./pages/EstimationHistory";
 import SymptomChecker from "./pages/SymptomChecker";
+import InsuranceCalculator from "./pages/InsuranceCalculator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
