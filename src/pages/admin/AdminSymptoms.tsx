@@ -18,14 +18,15 @@ const AdminSymptoms = () => {
     getSymptomAnalytics().then((d) => { setData(d); setLoading(false); });
   }, []);
 
-  const symptomFreq = data.reduce((acc: Record<string, number>, s) => {
+  const symptomFreq: Record<string, number> = data.reduce((acc: Record<string, number>, s: any) => {
     acc[s.symptom] = (acc[s.symptom] || 0) + 1; return acc;
   }, {});
-  const barData = (Object.entries(symptomFreq) as [string, number][]q) as [string, number][]).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  const barData = Object.entries(symptomFreq).map(([name, count]) => ({ name, count: count as number })).sort((a, b) => b.count - a.count);
 
-  const conditionFreq = data.reduce((acc: Record<string, number>, s: any) => {
+  const conditionFreq: Record<string, number> = data.reduce((acc: Record<string, number>, s: any) => {
     if (s.predicted_condition) acc[s.predicted_condition] = (acc[s.predicted_condition] || 0) + 1; return acc;
-  }, {} as Record<string, numb(Object.entries(conditionFreq) as [string, number][]ct.entries(conditionFreq).map(([name, value]) => ({ name, value }));
+  }, {});
+  const pieData = Object.entries(conditionFreq).map(([name, value]) => ({ name, value: value as number }));
 
   const cityFreq = data.reduce((acc: Record<string, Record<string, number>>, s) => {
     if (s.city) {
