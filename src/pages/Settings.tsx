@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Download, Trash2, Shield, AlertTriangle } from "lucide-react";
+import { Download, Trash2, Shield, AlertTriangle, CloudOff, WifiOff } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
+import { clearAllCache } from "@/lib/offlineStorage";
 import {
   AlertDialog,
   AlertDialogAction,
