@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   X,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +23,7 @@ interface Props {
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Symptom Assistant", path: "/symptoms", icon: Sparkles },
   { label: "Medicine Scanner", path: "/scanner", icon: Scan },
   { label: "Cost Estimation", path: "/estimate", icon: Calculator },
   { label: "Scheme Checker", path: "/schemes", icon: ShieldCheck },

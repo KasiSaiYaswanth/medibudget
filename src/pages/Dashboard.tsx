@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Scan, Calculator, ShieldCheck, History, ArrowRight, TrendingDown, Users } from "lucide-react";
+import { Scan, Calculator, ShieldCheck, History, ArrowRight, TrendingDown, Users, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -18,6 +18,13 @@ const Dashboard = () => {
   }, []);
 
   const quickActions = [
+    {
+      icon: Sparkles,
+      title: "Symptom Assistant",
+      description: "AI-powered symptom analysis & guidance",
+      path: "/symptoms",
+      color: "gradient-hero",
+    },
     {
       icon: Scan,
       title: "Medicine Scanner",
