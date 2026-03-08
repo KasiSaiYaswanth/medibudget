@@ -10,7 +10,7 @@ const Navbar = () => {
   const links = [
     { label: "Features", href: "#features" },
     { label: "How it Works", href: "#how-it-works" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "FAQ", href: "/faq", isRoute: true },
   ];
 
   return (
@@ -24,15 +24,25 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+          {links.map((link) =>
+            link.isRoute ? (
+              <Link
+                key={link.label}
+                to={link.href}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
@@ -58,11 +68,17 @@ const Navbar = () => {
             className="md:hidden border-t bg-background"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
-              {links.map((link) => (
-                <a key={link.label} href={link.href} className="text-sm font-medium text-muted-foreground py-2">
-                  {link.label}
-                </a>
-              ))}
+              {links.map((link) =>
+                link.isRoute ? (
+                  <Link key={link.label} to={link.href} className="text-sm font-medium text-muted-foreground py-2">
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a key={link.label} href={link.href} className="text-sm font-medium text-muted-foreground py-2">
+                    {link.label}
+                  </a>
+                )
+              )}
               <div className="flex flex-col gap-2 pt-2">
                 <Button variant="outline" asChild>
                   <Link to="/login">Sign In</Link>
