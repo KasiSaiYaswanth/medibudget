@@ -155,7 +155,7 @@ const CostResults = ({ result, onReset }: Props) => {
         <Button variant="outline" onClick={onReset} className="flex-1">
           <RotateCcw className="h-4 w-4 mr-2" /> New Estimation
         </Button>
-        <Button variant="hero" className="flex-1">
+        <Button variant="hero" className="flex-1" onClick={handleDownload}>
           <Download className="h-4 w-4 mr-2" /> Download Report
         </Button>
       </div>
