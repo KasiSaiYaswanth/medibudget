@@ -22,7 +22,7 @@ const AdminCosts = () => {
     acc[c.condition].count += 1;
     return acc;
   }, {} as Record<string, { total: number; count: number }>);
-  const conditionData = Object.entries(byCondition).map(([name, v]) => ({
+  const conditionData = (Object.entries(byCondition) as [string, { total: number; count: number }][]).map(([name, v]) => ({
     name, avgCost: Math.round(v.total / v.count), totalCost: v.total
   })).sort((a, b) => b.avgCost - a.avgCost);
 
