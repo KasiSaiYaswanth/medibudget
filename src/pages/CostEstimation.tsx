@@ -246,6 +246,26 @@ const CostEstimation = () => {
       recommendedTests: cond.recommendedTests,
       recommendedMedicines: cond.recommendedMedicines,
     });
+
+    // Save to localStorage for history
+    const savedEstimation = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      condition: cond.label,
+      city: `${c.label}, ${c.state}`,
+      hospitalType: h.label,
+      consultation,
+      tests,
+      medicines,
+      treatment,
+      total,
+      cityMultiplier: cm,
+      hospitalMultiplier: hm,
+    };
+    const existing = JSON.parse(localStorage.getItem("estimationHistory") || "[]");
+    existing.unshift(savedEstimation);
+    localStorage.setItem("estimationHistory", JSON.stringify(existing.slice(0, 50)));
+
     setStep(4);
   };
 
