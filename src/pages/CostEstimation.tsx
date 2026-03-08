@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CostResults from "@/components/estimation/CostResults";
+import NearbyHospitals from "@/components/estimation/NearbyHospitals";
 
 const cities = [
   // Andhra Pradesh
