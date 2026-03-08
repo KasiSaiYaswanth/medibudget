@@ -121,7 +121,9 @@ const DashboardLayout = ({ children }: Props) => {
   );
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex flex-col">
+      <OfflineBanner isOnline={isOnline} wasOffline={wasOffline} onRefresh={syncNow} />
+      <div className="flex flex-1">
       {/* Notification Center */}
       <NotificationCenter
         open={notifOpen}
