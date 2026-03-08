@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import CameraScanner from "@/components/scanner/CameraScanner";
 import ScanResultCard, { type ScannedMedicine } from "@/components/scanner/ScanResultCard";
+import SymptomMedicineGuide from "@/components/scanner/SymptomMedicineGuide";
 
 const MedicineScanner = () => {
   const [query, setQuery] = useState("");
@@ -196,6 +197,9 @@ const MedicineScanner = () => {
                       )}
                     </CardContent>
                   </Card>
+
+                  {/* Symptom-Based Medicine Guide */}
+                  <SymptomMedicineGuide onMedicineSearch={handleSearchFromScan} />
                 </div>
 
                 {/* Detail Panel */}
