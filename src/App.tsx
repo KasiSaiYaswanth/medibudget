@@ -12,6 +12,7 @@ import CostEstimation from "./pages/CostEstimation";
 import SchemeChecker from "./pages/SchemeChecker";
 import EstimationHistory from "./pages/EstimationHistory";
 import SymptomChecker from "./pages/SymptomChecker";
+import InsuranceCalculator from "./pages/InsuranceCalculator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/schemes" element={<SchemeChecker />} />
           <Route path="/history" element={<EstimationHistory />} />
           <Route path="/symptoms" element={<SymptomChecker />} />
+          <Route path="/insurance" element={<InsuranceCalculator />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
