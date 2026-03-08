@@ -15,6 +15,7 @@ import SymptomChecker from "./pages/SymptomChecker";
 import InsuranceCalculator from "./pages/InsuranceCalculator";
 import HealthDashboard from "./pages/HealthDashboard";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSymptoms from "./pages/admin/AdminSymptoms";
