@@ -13,6 +13,7 @@ import SchemeChecker from "./pages/SchemeChecker";
 import EstimationHistory from "./pages/EstimationHistory";
 import SymptomChecker from "./pages/SymptomChecker";
 import InsuranceCalculator from "./pages/InsuranceCalculator";
+import HealthDashboard from "./pages/HealthDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
