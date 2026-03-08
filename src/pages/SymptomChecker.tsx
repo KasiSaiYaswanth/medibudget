@@ -288,6 +288,14 @@ const SymptomChecker = () => {
           {/* Input */}
           <div className="p-4 pt-2 border-t border-border">
             <div className="flex gap-2">
+              <VoiceInputButton
+                onTranscript={(text) => {
+                  setInput(text);
+                  // Auto-send after voice capture
+                  setTimeout(() => sendMessage(text), 300);
+                }}
+                disabled={isLoading}
+              />
               <Input
                 ref={inputRef}
                 value={input}
@@ -307,7 +315,7 @@ const SymptomChecker = () => {
               </Button>
             </div>
             <p className="text-[10px] text-muted-foreground mt-2 text-center">
-              ⚕️ For guidance only. Not a substitute for professional medical advice.
+              ⚕️ For guidance only. Not a substitute for professional medical advice. 🎤 Tap the mic to speak your symptoms.
             </p>
           </div>
         </Card>
