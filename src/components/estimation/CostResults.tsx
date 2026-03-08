@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { Download, RotateCcw, IndianRupee } from "lucide-react";
+import { Download, RotateCcw, IndianRupee, FlaskConical, Pill } from "lucide-react";
 import type { EstimationResult } from "@/pages/CostEstimation";
 
 interface Props {
@@ -96,6 +96,59 @@ const CostResults = ({ result, onReset }: Props) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Recommended Tests */}
+      {result.recommendedTests && result.recommendedTests.length > 0 && (
+        <Card className="shadow-card border-blue-500/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FlaskConical className="h-5 w-5 text-blue-500" />
+              Recommended Tests
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Tests typically prescribed for {result.condition}</p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {result.recommendedTests.map((test, i) => (
+                <div key={i} className="flex items-center gap-2 p-2.5 rounded-lg bg-blue-500/5 border border-blue-500/10">
+                  <div className="h-6 w-6 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-blue-600">{i + 1}</span>
+                  </div>
+                  <span className="text-sm text-foreground">{test}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Recommended Medicines */}
+      {result.recommendedMedicines && result.recommendedMedicines.length > 0 && (
+        <Card className="shadow-card border-orange-500/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Pill className="h-5 w-5 text-orange-500" />
+              Medicines That May Be Prescribed
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Common medicines for {result.condition} (consult your doctor)</p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {result.recommendedMedicines.map((med, i) => (
+                <div key={i} className="flex items-center gap-2 p-2.5 rounded-lg bg-orange-500/5 border border-orange-500/10">
+                  <div className="h-6 w-6 rounded-full bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                    <Pill className="h-3 w-3 text-orange-600" />
+                  </div>
+                  <span className="text-sm text-foreground">{med}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-3 italic">
+              ⚠️ Disclaimer: These are commonly prescribed medicines for reference only. Actual prescription may vary based on your specific condition. Always consult a qualified doctor.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="flex gap-3">
         <Button variant="outline" onClick={onReset} className="flex-1">
