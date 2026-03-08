@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 const navItems = [
   { title: "Overview", path: "/admin", icon: LayoutDashboard },
+  { title: "Health Dashboard", path: "/admin/health", icon: Heart },
   { title: "Symptom Analytics", path: "/admin/symptoms", icon: Activity },
   { title: "Cost Trends", path: "/admin/costs", icon: BarChart3 },
   { title: "Hospitals", path: "/admin/hospitals", icon: Building2 },
