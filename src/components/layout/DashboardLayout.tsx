@@ -50,6 +50,8 @@ const DashboardLayout = ({ children }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { isOnline, wasOffline } = useNetworkStatus();
+  const { syncNow } = useOfflineSync();
 
   // Generate daily tips & checkup reminders on mount
   useEffect(() => {
