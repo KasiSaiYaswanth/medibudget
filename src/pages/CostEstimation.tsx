@@ -212,6 +212,7 @@ const CostEstimation = () => {
   const [condition, setCondition] = useState("");
   const [locality, setLocality] = useState("");
   const [result, setResult] = useState<EstimationResult | null>(null);
+  const [showLocationDetector, setShowLocationDetector] = useState(true);
 
   const totalSteps = 3;
 
