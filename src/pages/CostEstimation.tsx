@@ -289,6 +289,19 @@ const CostEstimation = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {showLocationDetector && (
+                    <NearbyHospitals
+                      citiesList={cities}
+                      onLocationDetected={(cityValue, loc) => {
+                        setCity(cityValue);
+                        setLocality(loc);
+                      }}
+                      onHospitalSelected={(type) => {
+                        setHospitalType(type);
+                      }}
+                      onDismiss={() => setShowLocationDetector(false)}
+                    />
+                  )}
                   <Select value={city} onValueChange={setCity}>
                     <SelectTrigger><SelectValue placeholder="Select city" /></SelectTrigger>
                     <SelectContent className="max-h-80">
