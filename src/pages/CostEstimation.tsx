@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CostResults from "@/components/estimation/CostResults";
+import NearbyHospitals from "@/components/estimation/NearbyHospitals";
 
 const cities = [
   // Andhra Pradesh
@@ -211,6 +212,7 @@ const CostEstimation = () => {
   const [condition, setCondition] = useState("");
   const [locality, setLocality] = useState("");
   const [result, setResult] = useState<EstimationResult | null>(null);
+  const [showLocationDetector, setShowLocationDetector] = useState(true);
 
   const totalSteps = 3;
 
@@ -287,6 +289,19 @@ const CostEstimation = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {showLocationDetector && (
+                    <NearbyHospitals
+                      citiesList={cities}
+                      onLocationDetected={(cityValue, loc) => {
+                        setCity(cityValue);
+                        setLocality(loc);
+                      }}
+                      onHospitalSelected={(type) => {
+                        setHospitalType(type);
+                      }}
+                      onDismiss={() => setShowLocationDetector(false)}
+                    />
+                  )}
                   <Select value={city} onValueChange={setCity}>
                     <SelectTrigger><SelectValue placeholder="Select city" /></SelectTrigger>
                     <SelectContent className="max-h-80">
