@@ -41,7 +41,7 @@ const AdminDashboard = () => {
     acc[s.symptom] = (acc[s.symptom] || 0) + 1;
     return acc;
   }, {});
-  const symptomChartData = Object.entries(symptomFreq)
+  const symptomChartData = (Object.entries(symptomFreq) as [string, number][])
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 8);
