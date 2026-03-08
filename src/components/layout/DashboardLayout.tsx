@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,10 +13,16 @@ import {
   X,
   Sparkles,
   Shield,
+  Bell,
 } from "lucide-react";
-import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import NotificationCenter from "@/components/notifications/NotificationCenter";
+import {
+  getUnreadCount,
+  generateDailyHealthTip,
+  generateCheckupReminder,
+} from "@/lib/notificationService";
 
 interface Props {
   children: ReactNode;
