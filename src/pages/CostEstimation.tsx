@@ -207,6 +207,9 @@ export interface EstimationResult {
 }
 
 const CostEstimation = () => {
+  const location = useLocation();
+  const navState = location.state as { chatbotCondition?: string; description?: string } | null;
+
   const [step, setStep] = useState(1);
   const [city, setCity] = useState("");
   const [hospitalType, setHospitalType] = useState("");
@@ -214,6 +217,8 @@ const CostEstimation = () => {
   const [locality, setLocality] = useState("");
   const [result, setResult] = useState<EstimationResult | null>(null);
   const [showLocationDetector, setShowLocationDetector] = useState(true);
+  const [chatbotCondition] = useState(navState?.chatbotCondition || "");
+  const [initialDescription] = useState(navState?.description || "");
 
   const totalSteps = 3;
 
