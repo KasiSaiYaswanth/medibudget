@@ -175,7 +175,7 @@ export async function fetchNearbyHospitals(
 
       const dist = haversineKm(lat, lon, hLat, hLon);
       const { type, typeLabel } = classifyHospital(el.tags);
-      const addr = [el.tags["addr:street"], el.tags["addr:city"]].filter(Boolean).join(", ");
+      const addr = el.tags["addr:full"] || [el.tags["addr:street"], el.tags["addr:city"] || el.tags["addr:district"]].filter(Boolean).join(", ");
 
       return {
         id: String(el.id),
