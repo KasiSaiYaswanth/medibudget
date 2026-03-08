@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { toast } from "sonner";
+import EmergencyAlert, { detectEmergencySymptom } from "@/components/emergency/EmergencyAlert";
 
 interface Message {
   role: "user" | "assistant";
