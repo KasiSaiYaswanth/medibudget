@@ -32,6 +32,7 @@ import MedicalDisclaimer from "./pages/MedicalDisclaimer";
 import ContactUs from "./pages/ContactUs";
 import FAQ from "./pages/FAQ";
 import Settings from "./pages/Settings";
+import Install from "./pages/Install";
 
 const queryClient = new QueryClient();
 
