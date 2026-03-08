@@ -33,6 +33,7 @@ const App = () => (
           <Route path="/schemes" element={<SchemeChecker />} />
           <Route path="/history" element={<EstimationHistory />} />
           <Route path="/symptoms" element={<SymptomChecker />} />
+          <Route path="/insurance" element={<InsuranceCalculator />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

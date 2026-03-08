@@ -47,6 +47,13 @@ const Dashboard = () => {
       color: "gradient-warm",
     },
     {
+      icon: Shield,
+      title: "Insurance Calculator",
+      description: "Check your insurance coverage",
+      path: "/insurance",
+      color: "gradient-accent",
+    },
+    {
       icon: History,
       title: "History",
       description: "View past estimations",

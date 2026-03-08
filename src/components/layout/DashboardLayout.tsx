@@ -27,6 +27,7 @@ const navItems = [
   { label: "Symptom Assistant", path: "/symptoms", icon: Sparkles },
   { label: "Medicine Scanner", path: "/scanner", icon: Scan },
   { label: "Cost Estimation", path: "/estimate", icon: Calculator },
+  { label: "Insurance", path: "/insurance", icon: Shield },
   { label: "Scheme Checker", path: "/schemes", icon: ShieldCheck },
   { label: "History", path: "/history", icon: History },
 ];
