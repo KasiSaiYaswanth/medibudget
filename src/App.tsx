@@ -26,6 +26,11 @@ import AdminSchemes from "./pages/admin/AdminSchemes";
 import AdminInsurance from "./pages/admin/AdminInsurance";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminAudit from "./pages/admin/AdminAudit";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import MedicalDisclaimer from "./pages/MedicalDisclaimer";
+import ContactUs from "./pages/ContactUs";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +51,12 @@ const App = () => (
           <Route path="/history" element={<EstimationHistory />} />
           <Route path="/symptoms" element={<SymptomChecker />} />
           <Route path="/insurance" element={<InsuranceCalculator />} />
+          {/* Legal & Info Pages */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/disclaimer" element={<MedicalDisclaimer />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/faq" element={<FAQ />} />
           {/* Admin Routes */}
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />

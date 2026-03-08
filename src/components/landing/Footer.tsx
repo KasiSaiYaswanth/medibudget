@@ -28,7 +28,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-foreground mb-3 text-sm">Company</h4>
+            <h4 className="font-semibold text-foreground mb-3 text-sm">Legal</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
@@ -39,8 +39,9 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-3 text-sm">Support</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="mailto:support@medibudget.in" className="hover:text-foreground transition-colors">Contact Us</a></li>
+              <li><Link to="/contact" className="hover:text-foreground transition-colors">Contact Us</Link></li>
               <li><Link to="/faq" className="hover:text-foreground transition-colors">FAQ</Link></li>
+              <li><a href="mailto:support@medibudget.in" className="hover:text-foreground transition-colors">support@medibudget.in</a></li>
             </ul>
           </div>
         </div>
