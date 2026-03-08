@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { toast } from "sonner";
+import EmergencyAlert, { detectEmergencySymptom } from "@/components/emergency/EmergencyAlert";
 
 interface Message {
   role: "user" | "assistant";
@@ -41,9 +42,20 @@ const SymptomChecker = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [emergencySymptom, setEmergencySymptom] = useState<string | null>(null);
+  const emergencyShownRef = useRef<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Check for emergency symptoms in any new text
+  const checkEmergency = useCallback((text: string) => {
+    const detected = detectEmergencySymptom(text);
+    if (detected && !emergencyShownRef.current.has(detected)) {
+      emergencyShownRef.current.add(detected);
+      setEmergencySymptom(detected);
+    }
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -111,11 +123,15 @@ const SymptomChecker = () => {
         }
       }
     }
+
+    // Check AI response for emergency indicators
+    if (assistantContent) checkEmergency(assistantContent);
   };
 
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
     const userMsg: Message = { role: "user", content: text.trim() };
+    checkEmergency(text.trim());
     const updated = [...messages, userMsg];
     setMessages(updated);
     setInput("");
@@ -155,6 +171,16 @@ const SymptomChecker = () => {
 
   return (
     <DashboardLayout>
+      {/* Emergency Alert Overlay */}
+      <AnimatePresence>
+        {emergencySymptom && (
+          <EmergencyAlert
+            detectedSymptom={emergencySymptom}
+            onDismiss={() => setEmergencySymptom(null)}
+          />
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col h-[calc(100vh-8rem)] lg:h-[calc(100vh-4rem)] max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex-shrink-0 mb-4">
