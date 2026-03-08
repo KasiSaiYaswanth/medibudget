@@ -408,11 +408,24 @@ const CostEstimation = () => {
                     </div>
                     <div>
                       <CardTitle className="text-lg">Condition / Treatment</CardTitle>
-                      <CardDescription>What treatment are you looking for?</CardDescription>
+                      <CardDescription>Describe your problem or select a condition</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  {/* AI Condition Analyzer */}
+                  <ConditionAnalyzer
+                    onConditionSelected={(val) => setCondition(val)}
+                    initialDescription={initialDescription}
+                    initialCondition={chatbotCondition}
+                  />
+
+                  <div className="relative flex items-center gap-2 py-1">
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase">or select manually</span>
+                    <div className="flex-1 h-px bg-border" />
+                  </div>
+
                   <Select value={condition} onValueChange={setCondition}>
                     <SelectTrigger><SelectValue placeholder="Select condition" /></SelectTrigger>
                     <SelectContent>
