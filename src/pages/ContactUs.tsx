@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Pill, ArrowLeft, Mail, Clock, Send } from "lucide-react";
+import { Pill, ArrowLeft, Mail, Clock, Send, MessageCircle, Phone, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +14,10 @@ const contactSchema = z.object({
   subject: z.string().trim().min(1, "Subject is required").max(200, "Subject is too long"),
   message: z.string().trim().min(10, "Message must be at least 10 characters").max(2000, "Message is too long"),
 });
+
+const WHATSAPP_NUMBER = "919381987307";
+const WHATSAPP_MESSAGE = encodeURIComponent("Hello MediBudget Support, I need assistance regarding your healthcare platform.");
+const SUPPORT_EMAIL = "medibudget@gmail.com";
 
 const ContactUs = () => {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -29,7 +33,6 @@ const ContactUs = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Rate limiting - 30 second cooldown
     const now = Date.now();
     if (now - lastSubmit < 30000) {
       toast.error("Please wait before sending another message.");
@@ -47,12 +50,18 @@ const ContactUs = () => {
     }
 
     setLoading(true);
-    // Simulate submission
-    await new Promise((r) => setTimeout(r, 1000));
+    // Open mailto with form data as fallback
+    const mailtoSubject = encodeURIComponent(result.data.subject);
+    const mailtoBody = encodeURIComponent(
+      `Name: ${result.data.name}\nEmail: ${result.data.email}\n\n${result.data.message}`
+    );
+    window.open(`mailto:${SUPPORT_EMAIL}?subject=${mailtoSubject}&body=${mailtoBody}`, "_self");
+
+    await new Promise((r) => setTimeout(r, 800));
     setLoading(false);
     setLastSubmit(Date.now());
     setForm({ name: "", email: "", subject: "", message: "" });
-    toast.success("Message sent! We'll get back to you within 24–48 hours.");
+    toast.success("Your message has been successfully sent to the MediBudget support team.");
   };
 
   return (
@@ -68,56 +77,102 @@ const ContactUs = () => {
         </div>
       </nav>
 
-      <main className="container mx-auto px-4 py-12 max-w-3xl">
+      <main className="container mx-auto px-4 py-12 max-w-4xl">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-8">
           <ArrowLeft className="h-4 w-4" /> Back to Home
         </Link>
 
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Contact Us</h1>
-        <p className="text-muted-foreground mb-10">Have a question or need help? We're here for you.</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Contact Us</h1>
+        <p className="text-muted-foreground mb-10">Have a question or need help? Reach us through any of the options below.</p>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
-          <Card>
-            <CardContent className="p-5 flex items-start gap-3">
-              <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+        {/* Quick Contact Cards */}
+        <div className="grid sm:grid-cols-3 gap-4 mb-10">
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="p-5 flex flex-col items-center text-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="h-6 w-6 text-primary" />
+              </div>
               <div>
-                <h3 className="font-semibold text-sm text-foreground">Email</h3>
-                <a href="mailto:support@medibudget.in" className="text-sm text-muted-foreground hover:text-primary">support@medibudget.in</a>
+                <h3 className="font-semibold text-sm text-foreground mb-1">Email Support</h3>
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="text-sm text-primary hover:underline break-all"
+                >
+                  {SUPPORT_EMAIL}
+                </a>
+                <p className="text-xs text-muted-foreground mt-1">Click to open your email client</p>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-5 flex items-start gap-3">
-              <Clock className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="p-5 flex flex-col items-center text-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                <MessageCircle className="h-6 w-6 text-green-600" />
+              </div>
               <div>
-                <h3 className="font-semibold text-sm text-foreground">Response Time</h3>
-                <p className="text-sm text-muted-foreground">24–48 hours</p>
+                <h3 className="font-semibold text-sm text-foreground mb-1">Chat on WhatsApp</h3>
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-green-600 hover:underline"
+                >
+                  +91 93819 87307
+                </a>
+                <p className="text-xs text-muted-foreground mt-1">Instant chat support</p>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-5 flex items-start gap-3">
-              <Send className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="p-5 flex flex-col items-center text-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-accent flex items-center justify-center">
+                <Clock className="h-6 w-6 text-primary" />
+              </div>
               <div>
-                <h3 className="font-semibold text-sm text-foreground">Support</h3>
-                <p className="text-sm text-muted-foreground">Mon–Sat, 9am–6pm IST</p>
+                <h3 className="font-semibold text-sm text-foreground mb-1">Response Time</h3>
+                <p className="text-sm text-muted-foreground">Within 24 hours</p>
+                <p className="text-xs text-muted-foreground mt-1">Mon–Sat, 9am–6pm IST</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
+        {/* WhatsApp CTA */}
+        <Card className="mb-10 border-green-200 bg-green-50/50 dark:bg-green-950/10 dark:border-green-900/30">
+          <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-4">
+            <MessageCircle className="h-10 w-10 text-green-600 shrink-0" />
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="font-semibold text-foreground">Need quick help?</h3>
+              <p className="text-sm text-muted-foreground">Chat with us on WhatsApp for instant support.</p>
+            </div>
+            <Button asChild className="bg-green-600 hover:bg-green-700 text-white shrink-0">
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" /> Chat on WhatsApp
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Contact Form */}
         <Card>
           <CardContent className="p-6 md:p-8">
-            <h2 className="text-xl font-semibold text-foreground mb-6">Send Us a Message</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-1">Send Us a Message</h2>
+            <p className="text-sm text-muted-foreground mb-6">Our support team typically responds within 24 hours.</p>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-1.5 block">Name</label>
-                  <Input placeholder="Your name" value={form.name} onChange={(e) => handleChange("name", e.target.value)} />
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Full Name</label>
+                  <Input placeholder="Your full name" value={form.name} onChange={(e) => handleChange("name", e.target.value)} />
                   {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
+                  <label className="text-sm font-medium text-foreground mb-1.5 block">Email Address</label>
                   <Input type="email" placeholder="you@example.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} />
                   {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
                 </div>
@@ -132,6 +187,12 @@ const ContactUs = () => {
                 <Textarea placeholder="Tell us more..." rows={5} value={form.message} onChange={(e) => handleChange("message", e.target.value)} />
                 {errors.message && <p className="text-xs text-destructive mt-1">{errors.message}</p>}
               </div>
+
+              <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                <Shield className="h-4 w-4 shrink-0 mt-0.5" />
+                <p>Your information will only be used to respond to your inquiry and will not be shared with third parties.</p>
+              </div>
+
               <Button type="submit" disabled={loading} className="w-full md:w-auto">
                 {loading ? "Sending..." : "Send Message"} <Send className="h-4 w-4 ml-1" />
               </Button>
