@@ -21,7 +21,7 @@ const AdminSymptoms = () => {
   const symptomFreq = data.reduce((acc: Record<string, number>, s) => {
     acc[s.symptom] = (acc[s.symptom] || 0) + 1; return acc;
   }, {});
-  const barData = Object.entries(symptomFreq).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  const barData = (Object.entries(symptomFreq) as [string, number][]).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
 
   const conditionFreq = data.reduce((acc: Record<string, number>, s: any) => {
     if (s.predicted_condition) acc[s.predicted_condition] = (acc[s.predicted_condition] || 0) + 1; return acc;
