@@ -2,3 +2,9 @@ project_id = "fmpcowmtdphciyveeahd"
 
 [functions.symptom-chat]
 verify_jwt = false
+
+[functions.medicine-scan]
+verify_jwt = false
+
+[functions.condition-analyze]
+verify_jwt = false

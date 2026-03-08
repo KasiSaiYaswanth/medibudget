@@ -17,6 +17,7 @@ export async function searchMedicines(query: string): Promise<MedicineInfo[]> {
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
+  // Try exact ilike search first
   const { data, error } = await supabase
     .from("medicines")
     .select("*")
@@ -27,6 +28,24 @@ export async function searchMedicines(query: string): Promise<MedicineInfo[]> {
     console.error("Search error:", error);
     return [];
   }
+
+  // If no results, try fuzzy: search with shorter substrings (min 3 chars)
+  if ((!data || data.length === 0) && q.length >= 3) {
+    // Try progressively shorter prefixes for typo tolerance
+    for (let len = q.length - 1; len >= 3; len--) {
+      const prefix = q.slice(0, len);
+      const { data: fuzzyData, error: fuzzyError } = await supabase
+        .from("medicines")
+        .select("*")
+        .or(`name.ilike.%${prefix}%,generic_name.ilike.%${prefix}%`)
+        .limit(20);
+
+      if (!fuzzyError && fuzzyData && fuzzyData.length > 0) {
+        return fuzzyData as MedicineInfo[];
+      }
+    }
+  }
+
   return (data as MedicineInfo[]) || [];
 }
 
