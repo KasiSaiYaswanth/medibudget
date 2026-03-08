@@ -28,12 +28,40 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogout = useCallback(async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  }, [navigate]);
+
+  // Inactivity timeout
+  useEffect(() => {
+    const resetTimer = () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        toast.error("Session expired due to inactivity.");
+        handleLogout();
+      }, INACTIVITY_TIMEOUT);
+    };
+
+    const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart", "click"];
+    events.forEach((e) => window.addEventListener(e, resetTimer));
+    resetTimer();
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+    };
+  }, [handleLogout]);
 
   useEffect(() => {
     checkIsAdmin().then((result) => {
@@ -44,10 +72,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       }
     });
   }, [navigate]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
   };
 
   if (isAdmin === null) {
