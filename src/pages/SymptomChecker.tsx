@@ -139,8 +139,15 @@ const SymptomChecker = () => {
   const extractConditionForEstimate = () => {
     const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
     if (lastAssistant) {
+      // Extract condition info from the last assistant message to pass to cost estimation
+      const conditionText = lastAssistant.content.slice(0, 500);
       toast.success("Redirecting to Cost Estimation...");
-      navigate("/estimate");
+      navigate("/estimate", {
+        state: {
+          chatbotCondition: conditionText,
+          description: messages.find((m) => m.role === "user")?.content || "",
+        },
+      });
     }
   };
 

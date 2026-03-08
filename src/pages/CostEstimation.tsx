@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight, MapPin, Building2, Stethoscope, Calculator } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CostResults from "@/components/estimation/CostResults";
 import NearbyHospitals from "@/components/estimation/NearbyHospitals";
+import ConditionAnalyzer from "@/components/estimation/ConditionAnalyzer";
 
 const cities = [
   // Andhra Pradesh
@@ -206,6 +207,9 @@ export interface EstimationResult {
 }
 
 const CostEstimation = () => {
+  const location = useLocation();
+  const navState = location.state as { chatbotCondition?: string; description?: string } | null;
+
   const [step, setStep] = useState(1);
   const [city, setCity] = useState("");
   const [hospitalType, setHospitalType] = useState("");
@@ -213,6 +217,8 @@ const CostEstimation = () => {
   const [locality, setLocality] = useState("");
   const [result, setResult] = useState<EstimationResult | null>(null);
   const [showLocationDetector, setShowLocationDetector] = useState(true);
+  const [chatbotCondition] = useState(navState?.chatbotCondition || "");
+  const [initialDescription] = useState(navState?.description || "");
 
   const totalSteps = 3;
 
@@ -402,11 +408,24 @@ const CostEstimation = () => {
                     </div>
                     <div>
                       <CardTitle className="text-lg">Condition / Treatment</CardTitle>
-                      <CardDescription>What treatment are you looking for?</CardDescription>
+                      <CardDescription>Describe your problem or select a condition</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  {/* AI Condition Analyzer */}
+                  <ConditionAnalyzer
+                    onConditionSelected={(val) => setCondition(val)}
+                    initialDescription={initialDescription}
+                    initialCondition={chatbotCondition}
+                  />
+
+                  <div className="relative flex items-center gap-2 py-1">
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase">or select manually</span>
+                    <div className="flex-1 h-px bg-border" />
+                  </div>
+
                   <Select value={condition} onValueChange={setCondition}>
                     <SelectTrigger><SelectValue placeholder="Select condition" /></SelectTrigger>
                     <SelectContent>
