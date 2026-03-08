@@ -92,7 +92,19 @@ const DashboardLayout = ({ children }: Props) => {
         })}
       </nav>
 
-      <div className="p-3">
+      <div className="p-3 space-y-1">
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-muted-foreground relative"
+          onClick={() => setNotifOpen(true)}
+        >
+          <Bell className="h-4 w-4 mr-2" /> Notifications
+          {unreadCount > 0 && (
+            <span className="ml-auto h-5 min-w-[1.25rem] rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center px-1">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+        </Button>
         <Button variant="ghost" className="w-full justify-start text-muted-foreground" onClick={handleLogout}>
           <LogOut className="h-4 w-4 mr-2" /> Sign Out
         </Button>
@@ -102,6 +114,13 @@ const DashboardLayout = ({ children }: Props) => {
 
   return (
     <div className="min-h-screen bg-background flex">
+      {/* Notification Center */}
+      <NotificationCenter
+        open={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        onUnreadChange={handleUnreadChange}
+      />
+
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-64 border-r bg-card flex-col fixed inset-y-0 left-0 z-30">
         <Sidebar />
@@ -130,7 +149,14 @@ const DashboardLayout = ({ children }: Props) => {
             </div>
             <span className="font-bold text-foreground">MediBudget</span>
           </div>
-          <div className="w-6" />
+          <button onClick={() => setNotifOpen(true)} className="relative">
+            <Bell className="h-5 w-5 text-foreground" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 h-4 min-w-[1rem] rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center px-0.5">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
         </header>
 
         <main className="p-4 md:p-8 max-w-5xl">
