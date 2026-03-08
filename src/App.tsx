@@ -15,6 +15,7 @@ import SymptomChecker from "./pages/SymptomChecker";
 import InsuranceCalculator from "./pages/InsuranceCalculator";
 import HealthDashboard from "./pages/HealthDashboard";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSymptoms from "./pages/admin/AdminSymptoms";
@@ -45,9 +46,10 @@ const App = () => (
           <Route path="/history" element={<EstimationHistory />} />
           <Route path="/symptoms" element={<SymptomChecker />} />
           <Route path="/insurance" element={<InsuranceCalculator />} />
-          <Route path="/health" element={<HealthDashboard />} />
           {/* Admin Routes */}
+          <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin/health" element={<AdminLayout><HealthDashboard /></AdminLayout>} />
           <Route path="/admin/symptoms" element={<AdminLayout><AdminSymptoms /></AdminLayout>} />
           <Route path="/admin/costs" element={<AdminLayout><AdminCosts /></AdminLayout>} />
           <Route path="/admin/hospitals" element={<AdminLayout><AdminHospitals /></AdminLayout>} />

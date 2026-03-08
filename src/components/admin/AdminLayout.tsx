@@ -3,8 +3,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Activity, Building2, Shield, Pill, FileText,
-  Users, ClipboardList, Settings, ChevronLeft, ChevronRight,
-  LogOut, Pill as PillIcon, BarChart3, Menu, X
+  Users, ClipboardList, ChevronLeft, ChevronRight,
+  LogOut, Pill as PillIcon, BarChart3, Menu, X, Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { checkIsAdmin } from "@/lib/adminService";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 const navItems = [
   { title: "Overview", path: "/admin", icon: LayoutDashboard },
+  { title: "Health Dashboard", path: "/admin/health", icon: Heart },
   { title: "Symptom Analytics", path: "/admin/symptoms", icon: Activity },
   { title: "Cost Trends", path: "/admin/costs", icon: BarChart3 },
   { title: "Hospitals", path: "/admin/hospitals", icon: Building2 },
@@ -39,14 +40,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       setIsAdmin(result);
       if (!result) {
         toast.error("Access denied. Admin privileges required.");
-        navigate("/dashboard");
+        navigate("/admin-loginin");
       }
     });
   }, [navigate]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/login");
+    navigate("/admin-login");
   };
 
   if (isAdmin === null) {
