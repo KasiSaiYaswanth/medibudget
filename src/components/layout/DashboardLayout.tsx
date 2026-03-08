@@ -15,6 +15,7 @@ import {
   Shield,
   Bell,
   Activity,
+  Settings,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ const navItems = [
   { label: "Insurance", path: "/insurance", icon: Shield },
   { label: "Scheme Checker", path: "/schemes", icon: ShieldCheck },
   { label: "History", path: "/history", icon: History },
+  { label: "Settings", path: "/settings", icon: Settings },
 ];
 
 const DashboardLayout = ({ children }: Props) => {

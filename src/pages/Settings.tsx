@@ -1,0 +1,176 @@
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { Download, Trash2, Shield, AlertTriangle } from "lucide-react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+const Settings = () => {
+  const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
+
+  const handleExportData = async () => {
+    setExporting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Please log in first");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("user-data", {
+        body: { action: "export" },
+      });
+
+      if (error) throw error;
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "medibudget-data-export.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Data exported successfully");
+    } catch (err: any) {
+      toast.error("Export failed: " + err.message);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Please log in first");
+        return;
+      }
+
+      const { error } = await supabase.functions.invoke("user-data", {
+        body: { action: "delete" },
+      });
+
+      if (error) throw error;
+
+      await supabase.auth.signOut();
+      toast.success("Account deleted successfully");
+      navigate("/");
+    } catch (err: any) {
+      toast.error("Deletion failed: " + err.message);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6 max-w-2xl">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Account Settings</h1>
+          <p className="text-muted-foreground text-sm">Manage your account, privacy, and data</p>
+        </div>
+
+        {/* Privacy & Data */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Privacy & Data
+            </CardTitle>
+            <CardDescription>
+              You have full control over your personal data. Export or delete your data at any time.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 rounded-lg border border-border">
+              <div>
+                <p className="font-medium text-foreground">Export Your Data</p>
+                <p className="text-sm text-muted-foreground">
+                  Download all your symptom searches, cost estimates, and profile data as JSON.
+                </p>
+              </div>
+              <Button variant="outline" onClick={handleExportData} disabled={exporting} className="gap-2 shrink-0">
+                <Download className="h-4 w-4" />
+                {exporting ? "Exporting..." : "Export"}
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-between p-4 rounded-lg border border-destructive/30 bg-destructive/5">
+              <div>
+                <p className="font-medium text-foreground">Delete Account</p>
+                <p className="text-sm text-muted-foreground">
+                  Permanently delete your account and all associated data. This cannot be undone.
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="gap-2 shrink-0">
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-destructive" />
+                      Delete Account Permanently?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete your account, all symptom searches, cost estimations,
+                      and any other data associated with your account. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteAccount}
+                      disabled={deleting}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {deleting ? "Deleting..." : "Yes, Delete My Account"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Usage Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">How We Use Your Data</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground space-y-2">
+            <p>• Your symptom searches help provide personalized health insights.</p>
+            <p>• Cost estimation data is used to improve pricing accuracy.</p>
+            <p>• We never sell your data to third parties.</p>
+            <p>• All data is encrypted in transit and at rest.</p>
+            <p>
+              Read our full{" "}
+              <a href="/privacy" className="text-primary underline">Privacy Policy</a>.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
+  );
+};
+
+export default Settings;

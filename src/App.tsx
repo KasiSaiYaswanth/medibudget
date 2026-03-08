@@ -31,6 +31,7 @@ import TermsOfService from "./pages/TermsOfService";
 import MedicalDisclaimer from "./pages/MedicalDisclaimer";
 import ContactUs from "./pages/ContactUs";
 import FAQ from "./pages/FAQ";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
           <Route path="/history" element={<EstimationHistory />} />
           <Route path="/symptoms" element={<SymptomChecker />} />
           <Route path="/insurance" element={<InsuranceCalculator />} />
+          <Route path="/settings" element={<Settings />} />
           {/* Legal & Info Pages */}
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
