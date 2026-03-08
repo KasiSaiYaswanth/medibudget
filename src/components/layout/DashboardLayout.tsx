@@ -173,6 +173,7 @@ const DashboardLayout = ({ children }: Props) => {
           {children}
         </main>
       </div>
+      </div>
     </div>
   );
 };
