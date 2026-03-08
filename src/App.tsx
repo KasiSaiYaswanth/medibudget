@@ -11,6 +11,7 @@ import MedicineScanner from "./pages/MedicineScanner";
 import CostEstimation from "./pages/CostEstimation";
 import SchemeChecker from "./pages/SchemeChecker";
 import EstimationHistory from "./pages/EstimationHistory";
+import SymptomChecker from "./pages/SymptomChecker";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
