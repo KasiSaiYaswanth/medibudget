@@ -171,6 +171,16 @@ const SymptomChecker = () => {
 
   return (
     <DashboardLayout>
+      {/* Emergency Alert Overlay */}
+      <AnimatePresence>
+        {emergencySymptom && (
+          <EmergencyAlert
+            detectedSymptom={emergencySymptom}
+            onDismiss={() => setEmergencySymptom(null)}
+          />
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col h-[calc(100vh-8rem)] lg:h-[calc(100vh-4rem)] max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex-shrink-0 mb-4">
