@@ -40,7 +40,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       setIsAdmin(result);
       if (!result) {
         toast.error("Access denied. Admin privileges required.");
-        navigate("/log    }
+        navigate("/login");
+      }
     });
   }, [navigate]);
 
