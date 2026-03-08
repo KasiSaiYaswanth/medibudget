@@ -101,11 +101,12 @@ const ConditionAnalyzer = ({ onConditionSelected, initialDescription, initialCon
   };
 
   // Auto-analyze if chatbot condition is passed
-  useState(() => {
-    if (initialCondition && !result) {
+  useEffect(() => {
+    if (initialCondition) {
       analyze();
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Card className="shadow-card border-primary/10 bg-gradient-to-br from-primary/5 to-transparent">
