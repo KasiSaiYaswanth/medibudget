@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Building2, Pill, Users, TrendingUp, Shield, BarChart3, Heart } from "lucide-react";
+import { Activity, Building2, Pill, TrendingUp, Shield, BarChart3, Heart, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, Legend
 } from "recharts";
 import { getSymptomAnalytics, getCostAnalytics, getHospitals, getMedicines, getGovernmentSchemes } from "@/lib/adminService";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
 const COLORS = ["hsl(168, 80%, 36%)", "hsl(210, 90%, 55%)", "hsl(25, 95%, 53%)", "hsl(0, 72%, 51%)", "hsl(280, 60%, 50%)", "hsl(45, 90%, 50%)"];
 
@@ -18,23 +21,45 @@ const AdminDashboard = () => {
   const [medicineCount, setMedicineCount] = useState(0);
   const [schemeCount, setSchemeCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  useEffect(() => {
-    Promise.all([
+  const fetchData = useCallback(async () => {
+    const [s, c, h, m, sc] = await Promise.all([
       getSymptomAnalytics(),
       getCostAnalytics(),
       getHospitals(),
       getMedicines(),
       getGovernmentSchemes(),
-    ]).then(([s, c, h, m, sc]) => {
-      setSymptoms(s);
-      setCosts(c);
-      setHospitalCount(h.length);
-      setMedicineCount(m.length);
-      setSchemeCount(sc.length);
-      setLoading(false);
-    });
+    ]);
+    setSymptoms(s);
+    setCosts(c);
+    setHospitalCount(h.length);
+    setMedicineCount(m.length);
+    setSchemeCount(sc.length);
+    setLastUpdated(new Date());
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Realtime subscriptions for live updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-dashboard-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'symptom_searches' }, () => {
+        fetchData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cost_estimation_logs' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchData]);
 
   // Process symptom frequency
   const symptomFreq = symptoms.reduce((acc: Record<string, number>, s) => {
@@ -96,9 +121,25 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-        <p className="text-muted-foreground text-sm">Platform analytics & system overview</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+          <p className="text-muted-foreground text-sm">
+            Live platform analytics • Last updated: {format(lastUpdated, "HH:mm:ss")}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={fetchData} className="gap-2">
+          <RefreshCw className="h-4 w-4" /> Refresh
+        </Button>
+      </div>
+
+      {/* Live indicator */}
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+        </span>
+        <span className="text-xs text-muted-foreground">Real-time updates enabled</span>
       </div>
 
       {/* Metric Cards */}
@@ -228,20 +269,24 @@ const AdminDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {symptoms.slice(0, 10).map((s, i) => (
-              <div key={s.id || i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                <div className="flex items-center gap-3">
-                  <Badge variant="secondary" className="capitalize">{s.symptom}</Badge>
-                  <span className="text-sm text-muted-foreground">→ {s.predicted_condition || "Unknown"}</span>
+            {symptoms.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No symptom searches yet. Data will appear here when users search for symptoms.</p>
+            ) : (
+              symptoms.slice(0, 10).map((s, i) => (
+                <div key={s.id || i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="secondary" className="capitalize">{s.symptom}</Badge>
+                    <span className="text-sm text-muted-foreground">→ {s.predicted_condition || "Unknown"}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {s.city && <Badge variant="outline" className="text-xs">{s.city}</Badge>}
+                    {s.confidence_score && (
+                      <span className="text-xs font-medium text-primary">{s.confidence_score}%</span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {s.city && <Badge variant="outline" className="text-xs">{s.city}</Badge>}
-                  {s.confidence_score && (
-                    <span className="text-xs font-medium text-primary">{s.confidence_score}%</span>
-                  )}
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
