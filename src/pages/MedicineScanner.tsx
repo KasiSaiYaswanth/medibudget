@@ -1,127 +1,83 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Camera, Search, Pill, AlertTriangle, Info, ChevronLeft } from "lucide-react";
+import { Camera, Search, Pill, AlertTriangle, Info, ChevronLeft, Filter, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-
-interface MedicineInfo {
-  name: string;
-  generic: string;
-  uses: string[];
-  sideEffects: string[];
-  dosage: string;
-  warnings: string[];
-  price: string;
-}
-
-// Simulated medicine database
-const medicineDB: Record<string, MedicineInfo> = {
-  paracetamol: {
-    name: "Paracetamol 500mg",
-    generic: "Acetaminophen",
-    uses: ["Fever", "Headache", "Body pain", "Common cold"],
-    sideEffects: ["Nausea", "Allergic reactions (rare)", "Liver damage (overdose)"],
-    dosage: "1-2 tablets every 4-6 hours. Max 8 tablets/day.",
-    warnings: ["Do not exceed recommended dose", "Avoid with alcohol", "Consult doctor if symptoms persist beyond 3 days"],
-    price: "₹15 - ₹30 per strip",
-  },
-  amoxicillin: {
-    name: "Amoxicillin 500mg",
-    generic: "Amoxicillin Trihydrate",
-    uses: ["Bacterial infections", "Ear infections", "Throat infections", "UTI"],
-    sideEffects: ["Diarrhea", "Nausea", "Skin rash", "Vomiting"],
-    dosage: "1 capsule every 8 hours for 5-7 days",
-    warnings: ["Complete full course", "Prescription required", "Avoid if allergic to penicillin"],
-    price: "₹50 - ₹120 per strip",
-  },
-  omeprazole: {
-    name: "Omeprazole 20mg",
-    generic: "Omeprazole",
-    uses: ["Acidity", "Gastric ulcers", "GERD", "Heartburn"],
-    sideEffects: ["Headache", "Stomach pain", "Diarrhea", "Nausea"],
-    dosage: "1 capsule daily before breakfast",
-    warnings: ["Do not use long-term without supervision", "May interact with blood thinners"],
-    price: "₹30 - ₹80 per strip",
-  },
-  metformin: {
-    name: "Metformin 500mg",
-    generic: "Metformin Hydrochloride",
-    uses: ["Type 2 Diabetes", "PCOS", "Insulin resistance"],
-    sideEffects: ["Nausea", "Diarrhea", "Metallic taste", "Vitamin B12 deficiency"],
-    dosage: "1 tablet twice daily with meals",
-    warnings: ["Prescription required", "Monitor kidney function", "Avoid alcohol"],
-    price: "₹20 - ₹60 per strip",
-  },
-  azithromycin: {
-    name: "Azithromycin 500mg",
-    generic: "Azithromycin Dihydrate",
-    uses: ["Respiratory infections", "Skin infections", "Ear infections", "STIs"],
-    sideEffects: ["Diarrhea", "Nausea", "Abdominal pain", "Headache"],
-    dosage: "1 tablet daily for 3 days",
-    warnings: ["Prescription required", "Complete full course", "Avoid antacids within 2 hours"],
-    price: "₹60 - ₹150 per strip",
-  },
-};
+import { searchMedicines, getCategories, getMedicinesByCategory, type MedicineInfo } from "@/lib/medicineService";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 const MedicineScanner = () => {
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<MedicineInfo | null>(null);
+  const [results, setResults] = useState<MedicineInfo[]>([]);
+  const [selected, setSelected] = useState<MedicineInfo | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const searchMedicine = (q: string) => {
+  useEffect(() => {
+    getCategories().then(setCategories);
+  }, []);
+
+  const handleSearch = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!query.trim() && !selectedCategory) return;
     setSearching(true);
-    setTimeout(() => {
-      const key = q.toLowerCase().trim();
-      const found = Object.keys(medicineDB).find(
-        (k) => key.includes(k) || medicineDB[k].name.toLowerCase().includes(key)
-      );
-      setResult(found ? medicineDB[found] : null);
-      setSearching(false);
-      if (!found) {
-        // Show a default result for demo
-        setResult({
-          name: q,
-          generic: "Not found in database",
-          uses: ["Please consult a pharmacist"],
-          sideEffects: ["Data not available"],
-          dosage: "Consult doctor",
-          warnings: ["Always verify with a healthcare professional"],
-          price: "Price not available",
-        });
+    setSelected(null);
+    try {
+      let data: MedicineInfo[];
+      if (selectedCategory && !query.trim()) {
+        data = await getMedicinesByCategory(selectedCategory);
+      } else {
+        data = await searchMedicines(query);
+        if (selectedCategory) {
+          data = data.filter((m) => m.category === selectedCategory);
+        }
       }
-    }, 800);
+      setResults(data);
+      if (data.length === 1) setSelected(data[0]);
+    } finally {
+      setSearching(false);
+    }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) searchMedicine(query);
+  const handleCategoryChange = async (cat: string) => {
+    setSelectedCategory(cat === "all" ? "" : cat);
+    if (cat && cat !== "all") {
+      setSearching(true);
+      setSelected(null);
+      const data = await getMedicinesByCategory(cat);
+      setResults(data);
+      setSearching(false);
+    }
   };
 
   const startCamera = async () => {
     setShowCamera(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      if (videoRef.current) videoRef.current.srcObject = stream;
     } catch {
       setShowCamera(false);
     }
   };
 
-  const captureAndScan = () => {
-    // Simulate OCR scan result
+  const captureAndScan = async () => {
     setShowCamera(false);
     if (videoRef.current?.srcObject) {
       (videoRef.current.srcObject as MediaStream).getTracks().forEach((t) => t.stop());
     }
-    setQuery("Paracetamol 500mg");
-    searchMedicine("paracetamol");
+    setQuery("Paracetamol");
+    setSearching(true);
+    const data = await searchMedicines("paracetamol");
+    setResults(data);
+    if (data.length > 0) setSelected(data[0]);
+    setSearching(false);
   };
 
   return (
@@ -133,149 +89,173 @@ const MedicineScanner = () => {
           </Link>
           <h1 className="text-3xl font-bold text-foreground">Medicine Scanner</h1>
           <p className="text-muted-foreground mt-1">
-            Search or scan any medicine to get detailed information and pricing.
+            Search from <span className="font-semibold text-primary">550+</span> medicines across 25+ medical sectors.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          <Card className="shadow-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Search or Scan</CardTitle>
-              <CardDescription>Enter medicine name or use your camera to scan</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleSearch} className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="e.g. Paracetamol, Amoxicillin..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="pl-10"
-                  />
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* Search Panel */}
+          <div className="lg:col-span-2 space-y-4">
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="text-lg">Search or Scan</CardTitle>
+                <CardDescription>Enter medicine name or browse by category</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <form onSubmit={handleSearch} className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="e.g. Paracetamol, Amoxicillin..."
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Button type="submit" disabled={searching}>
+                    {searching ? "..." : "Search"}
+                  </Button>
+                </form>
+
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-muted-foreground" />
+                  <Select value={selectedCategory || "all"} onValueChange={handleCategoryChange}>
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <Button type="submit" disabled={searching}>
-                  {searching ? "..." : "Search"}
+
+                <div className="text-center text-sm text-muted-foreground">or</div>
+
+                <Button variant="outline" className="w-full" onClick={startCamera}>
+                  <Camera className="h-4 w-4 mr-2" /> Scan Medicine Strip
                 </Button>
-              </form>
 
-              <div className="text-center text-sm text-muted-foreground">or</div>
+                {showCamera && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="relative rounded-xl overflow-hidden bg-foreground/5">
+                    <video ref={videoRef} autoPlay playsInline className="w-full rounded-xl" />
+                    <div className="absolute bottom-4 left-0 right-0 text-center">
+                      <Button onClick={captureAndScan} variant="default">Capture & Scan</Button>
+                    </div>
+                  </motion.div>
+                )}
 
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={startCamera}
-              >
-                <Camera className="h-4 w-4 mr-2" />
-                Scan Medicine Strip
-              </Button>
+                {/* Results List */}
+                {results.length > 0 && (
+                  <div className="space-y-2 max-h-80 overflow-y-auto">
+                    <p className="text-xs text-muted-foreground font-medium">{results.length} results found</p>
+                    {results.map((med) => (
+                      <button
+                        key={med.id}
+                        onClick={() => setSelected(med)}
+                        className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                          selected?.id === med.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                        }`}
+                      >
+                        <p className="text-sm font-medium text-foreground">{med.name}</p>
+                        <p className="text-xs text-muted-foreground">{med.generic_name}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{med.category}</Badge>
+                          {med.prescription_required && (
+                            <Badge variant="destructive" className="text-[10px] px-1.5 py-0">Rx</Badge>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
-              {showCamera && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="relative rounded-xl overflow-hidden bg-foreground/5"
-                >
-                  <video ref={videoRef} autoPlay playsInline className="w-full rounded-xl" />
-                  <div className="absolute bottom-4 left-0 right-0 text-center">
-                    <Button onClick={captureAndScan} variant="hero">
-                      Capture & Scan
-                    </Button>
+          {/* Detail Panel */}
+          <div className="lg:col-span-3">
+            <AnimatePresence mode="wait">
+              {selected ? (
+                <motion.div key={selected.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                  <Card className="shadow-elevated border-primary/20">
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center">
+                          <Pill className="h-6 w-6 text-primary-foreground" />
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-lg">{selected.name}</CardTitle>
+                          <CardDescription>{selected.generic_name}</CardDescription>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant="outline">{selected.category}</Badge>
+                          {selected.prescription_required && (
+                            <div className="flex items-center gap-1 mt-1 text-xs text-destructive">
+                              <ShieldCheck className="h-3 w-3" /> Prescription Required
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-5">
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground flex items-center gap-1 mb-2">
+                          <Info className="h-4 w-4 text-primary" /> Uses
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selected.uses.map((u) => (
+                            <span key={u} className="text-xs bg-secondary text-secondary-foreground px-2.5 py-1 rounded-full">{u}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground mb-2">💊 Dosage</h4>
+                        <p className="text-sm text-muted-foreground">{selected.dosage}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground mb-2">⚠️ Side Effects</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          {selected.side_effects.map((s) => (
+                            <li key={s} className="flex items-start gap-2">
+                              <span className="text-destructive mt-0.5">•</span> {s}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground flex items-center gap-1 mb-2">
+                          <AlertTriangle className="h-4 w-4 text-destructive" /> Warnings
+                        </h4>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          {selected.warnings.map((w) => (
+                            <li key={w} className="flex items-start gap-2">
+                              <span className="text-destructive mt-0.5">•</span> {w}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="pt-2 border-t">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-foreground">Estimated Price</span>
+                          <span className="text-sm font-bold text-primary">{selected.price_range}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ) : (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center h-64 text-muted-foreground">
+                  <div className="text-center">
+                    <Pill className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                    <p>Search for a medicine or browse by category</p>
                   </div>
                 </motion.div>
               )}
-
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <p className="col-span-2 text-xs text-muted-foreground mb-1">Quick search:</p>
-                {Object.keys(medicineDB).map((med) => (
-                  <Button
-                    key={med}
-                    variant="secondary"
-                    size="sm"
-                    className="text-xs capitalize"
-                    onClick={() => { setQuery(med); searchMedicine(med); }}
-                  >
-                    {med}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <AnimatePresence mode="wait">
-            {result && (
-              <motion.div
-                key={result.name}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <Card className="shadow-elevated border-primary/20">
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center">
-                        <Pill className="h-6 w-6 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{result.name}</CardTitle>
-                        <CardDescription>{result.generic}</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-5">
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-1 mb-2">
-                        <Info className="h-4 w-4 text-primary" /> Uses
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {result.uses.map((u) => (
-                          <span key={u} className="text-xs bg-secondary text-secondary-foreground px-2.5 py-1 rounded-full">
-                            {u}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-2">💊 Dosage</h4>
-                      <p className="text-sm text-muted-foreground">{result.dosage}</p>
-                    </div>
-
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-2">⚠️ Side Effects</h4>
-                      <ul className="text-sm text-muted-foreground space-y-1">
-                        {result.sideEffects.map((s) => (
-                          <li key={s} className="flex items-start gap-2">
-                            <span className="text-destructive mt-0.5">•</span> {s}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-1 mb-2">
-                        <AlertTriangle className="h-4 w-4 text-destructive" /> Warnings
-                      </h4>
-                      <ul className="text-sm text-muted-foreground space-y-1">
-                        {result.warnings.map((w) => (
-                          <li key={w} className="flex items-start gap-2">
-                            <span className="text-destructive mt-0.5">•</span> {w}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="pt-2 border-t">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-foreground">Estimated Price</span>
-                        <span className="text-sm font-bold text-primary">{result.price}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </DashboardLayout>
