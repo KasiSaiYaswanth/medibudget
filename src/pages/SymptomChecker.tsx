@@ -42,9 +42,20 @@ const SymptomChecker = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [emergencySymptom, setEmergencySymptom] = useState<string | null>(null);
+  const emergencyShownRef = useRef<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Check for emergency symptoms in any new text
+  const checkEmergency = useCallback((text: string) => {
+    const detected = detectEmergencySymptom(text);
+    if (detected && !emergencyShownRef.current.has(detected)) {
+      emergencyShownRef.current.add(detected);
+      setEmergencySymptom(detected);
+    }
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
