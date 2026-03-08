@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { checkIsAdmin } from "@/lib/adminService";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navItems = [
   { title: "Overview", path: "/admin", icon: LayoutDashboard },
@@ -125,6 +126,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </nav>
 
         <div className="p-3 border-t border-border space-y-1">
+          <div className="flex items-center gap-3 px-3 py-1">
+            <ThemeToggle />
+            {!collapsed && <span className="text-sm text-muted-foreground">Theme</span>}
+          </div>
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground w-full"
