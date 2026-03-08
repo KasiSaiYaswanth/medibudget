@@ -139,6 +139,18 @@ const SymptomChecker = () => {
 
     try {
       await streamChat(updated);
+      // Save symptom history for Health Dashboard
+      if (messages.length === 0) {
+        try {
+          const history = JSON.parse(localStorage.getItem("medibudget_symptom_history") || "[]");
+          history.unshift({
+            id: crypto.randomUUID(),
+            date: new Date().toISOString(),
+            symptoms: text.trim(),
+          });
+          localStorage.setItem("medibudget_symptom_history", JSON.stringify(history.slice(0, 20)));
+        } catch {}
+      }
     } catch (e) {
       console.error(e);
     } finally {

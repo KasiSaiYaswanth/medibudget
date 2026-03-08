@@ -14,6 +14,7 @@ import {
   Sparkles,
   Shield,
   Bell,
+  Activity,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -30,6 +31,7 @@ interface Props {
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Health Dashboard", path: "/health", icon: Activity },
   { label: "Symptom Assistant", path: "/symptoms", icon: Sparkles },
   { label: "Medicine Scanner", path: "/scanner", icon: Scan },
   { label: "Cost Estimation", path: "/estimate", icon: Calculator },
