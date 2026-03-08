@@ -3,8 +3,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Activity, Building2, Shield, Pill, FileText,
-  Users, ClipboardList, Settings, ChevronLeft, ChevronRight,
-  LogOut, Pill as PillIcon, BarChart3, Menu, X
+  Users, ClipboardList, ChevronLeft, ChevronRight,
+  LogOut, Pill as PillIcon, BarChart3, Menu, X, Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { checkIsAdmin } from "@/lib/adminService";
