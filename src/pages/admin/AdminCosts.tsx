@@ -26,15 +26,15 @@ const AdminCosts = () => {
     name, avgCost: Math.round(v.total / v.count), totalCost: v.total
   })).sort((a, b) => b.avgCost - a.avgCost);
 
-  const byCity = data.reduce((acc: Record<string, { total: number; count: number }>, c) => {
+  const byCity = data.reduce((acc: Record<string, { total: number; count: number }>, c: any) => {
     const city = c.city || "Unknown";
     if (!acc[city]) acc[city] = { total: 0, count: 0 };
     acc[city].total += Number(c.estimated_cost);
     acc[city].count += 1;
     return acc;
-  }, {});
-  const cityData = Object.entries(byCity).map(([name, { total, count }]) => ({
-    name, avgCost: Math.round(total / count)
+  }, {} as Record<string, { total: number; count: number }>);
+  const cityData = Object.entries(byCity).map(([name, v]) => ({
+    name, avgCost: Math.round(v.total / v.count)
   }));
 
   const byType = data.reduce((acc: Record<string, number>, c) => {

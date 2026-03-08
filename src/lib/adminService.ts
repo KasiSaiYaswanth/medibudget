@@ -82,13 +82,13 @@ export async function logAdminAction(action: string, entityType: string, entityI
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase.from("admin_audit_logs").insert({
+  await supabase.from("admin_audit_logs").insert([{
     admin_id: user.id,
     action,
     entity_type: entityType,
     entity_id: entityId,
-    details: details || {},
-  });
+    details: (details || {}) as any,
+  }] as any);
 }
 
 // CRUD operations

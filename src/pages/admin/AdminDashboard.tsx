@@ -47,14 +47,14 @@ const AdminDashboard = () => {
     .slice(0, 8);
 
   // Process cost by condition
-  const costByCondition = costs.reduce((acc: Record<string, { total: number; count: number }>, c) => {
+  const costByCondition = costs.reduce((acc: Record<string, { total: number; count: number }>, c: any) => {
     if (!acc[c.condition]) acc[c.condition] = { total: 0, count: 0 };
     acc[c.condition].total += Number(c.estimated_cost);
     acc[c.condition].count += 1;
     return acc;
-  }, {});
+  }, {} as Record<string, { total: number; count: number }>);
   const costChartData = Object.entries(costByCondition)
-    .map(([name, { total, count }]) => ({ name, avgCost: Math.round(total / count) }))
+    .map(([name, v]) => ({ name, avgCost: Math.round(v.total / v.count) }))
     .sort((a, b) => b.avgCost - a.avgCost);
 
   // Insurance usage
