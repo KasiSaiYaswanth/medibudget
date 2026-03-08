@@ -47,7 +47,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate(admin-"/login");
+    navigate("/admin-login");
   };
 
   if (isAdmin === null) {
