@@ -19,6 +19,13 @@ const Dashboard = () => {
 
   const quickActions = [
     {
+      icon: Sparkles,
+      title: "Symptom Assistant",
+      description: "AI-powered symptom analysis & guidance",
+      path: "/symptoms",
+      color: "gradient-hero",
+    },
+    {
       icon: Scan,
       title: "Medicine Scanner",
       description: "Scan or search any medicine",
