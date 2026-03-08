@@ -25,6 +25,9 @@ import {
   generateDailyHealthTip,
   generateCheckupReminder,
 } from "@/lib/notificationService";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useOfflineSync } from "@/hooks/useOfflineSync";
+import { OfflineBanner } from "@/components/offline/OfflineBanner";
 
 interface Props {
   children: ReactNode;
