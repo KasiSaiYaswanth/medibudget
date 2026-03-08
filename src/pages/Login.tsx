@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Link, useNavigate } from "react-router-dom";
 import { Pill, Mail, Lock, ArrowRight, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { checkIsAdmin } from "@/lib/adminService";
+import { Separator } from "@/components/ui/separator";
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
