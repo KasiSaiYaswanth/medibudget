@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      medicines: {
+        Row: {
+          category: string
+          created_at: string
+          dosage: string
+          generic_name: string
+          id: string
+          name: string
+          prescription_required: boolean
+          price_range: string
+          side_effects: string[]
+          uses: string[]
+          warnings: string[]
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          dosage: string
+          generic_name: string
+          id?: string
+          name: string
+          prescription_required?: boolean
+          price_range: string
+          side_effects?: string[]
+          uses?: string[]
+          warnings?: string[]
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          dosage?: string
+          generic_name?: string
+          id?: string
+          name?: string
+          prescription_required?: boolean
+          price_range?: string
+          side_effects?: string[]
+          uses?: string[]
+          warnings?: string[]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
