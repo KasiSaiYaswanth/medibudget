@@ -40,14 +40,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       setIsAdmin(result);
       if (!result) {
         toast.error("Access denied. Admin privileges required.");
-        navigate("/admin-login");
+        navigate("/admin-loginin");
       }
     });
   }, [navigate]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/login");
+    navigate(admin-"/login");
   };
 
   if (isAdmin === null) {
