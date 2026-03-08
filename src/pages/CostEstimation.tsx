@@ -241,6 +241,8 @@ const CostEstimation = () => {
       total,
       cityMultiplier: cm,
       hospitalMultiplier: hm,
+      recommendedTests: cond.recommendedTests,
+      recommendedMedicines: cond.recommendedMedicines,
     });
     setStep(4);
   };
