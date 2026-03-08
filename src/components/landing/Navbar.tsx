@@ -46,7 +46,8 @@ const Navbar = () => {
           )}
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="ghost" asChild>
             <Link to="/login">Sign In</Link>
           </Button>
