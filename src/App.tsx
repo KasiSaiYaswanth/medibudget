@@ -31,6 +31,7 @@ import TermsOfService from "./pages/TermsOfService";
 import MedicalDisclaimer from "./pages/MedicalDisclaimer";
 import ContactUs from "./pages/ContactUs";
 import FAQ from "./pages/FAQ";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
