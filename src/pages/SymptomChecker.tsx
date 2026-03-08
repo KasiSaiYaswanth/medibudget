@@ -123,6 +123,9 @@ const SymptomChecker = () => {
         }
       }
     }
+
+    // Check AI response for emergency indicators
+    if (assistantContent) checkEmergency(assistantContent);
   };
 
   const sendMessage = async (text: string) => {
