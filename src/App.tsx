@@ -52,6 +52,7 @@ const App = () => (
           <Route path="/history" element={<EstimationHistory />} />
           <Route path="/symptoms" element={<SymptomChecker />} />
           <Route path="/insurance" element={<InsuranceCalculator />} />
+          <Route path="/settings" element={<Settings />} />
           {/* Legal & Info Pages */}
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
