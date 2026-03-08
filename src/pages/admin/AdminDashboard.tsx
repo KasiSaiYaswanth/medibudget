@@ -53,7 +53,7 @@ const AdminDashboard = () => {
     acc[c.condition].count += 1;
     return acc;
   }, {} as Record<string, { total: number; count: number }>);
-  const costChartData = Object.entries(costByCondition)
+  const costChartData = (Object.entries(costByCondition) as [string, { total: number; count: number }][])
     .map(([name, v]) => ({ name, avgCost: Math.round(v.total / v.count) }))
     .sort((a, b) => b.avgCost - a.avgCost);
 

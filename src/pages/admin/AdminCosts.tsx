@@ -33,7 +33,7 @@ const AdminCosts = () => {
     acc[city].count += 1;
     return acc;
   }, {} as Record<string, { total: number; count: number }>);
-  const cityData = Object.entries(byCity).map(([name, v]) => ({
+  const cityData = (Object.entries(byCity) as [string, { total: number; count: number }][]).map(([name, v]) => ({
     name, avgCost: Math.round(v.total / v.count)
   }));
 

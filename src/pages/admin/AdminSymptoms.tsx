@@ -21,12 +21,11 @@ const AdminSymptoms = () => {
   const symptomFreq = data.reduce((acc: Record<string, number>, s) => {
     acc[s.symptom] = (acc[s.symptom] || 0) + 1; return acc;
   }, {});
-  const barData = (Object.entries(symptomFreq) as [string, number][]).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+  const barData = (Object.entries(symptomFreq) as [string, number][]q) as [string, number][]).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
 
   const conditionFreq = data.reduce((acc: Record<string, number>, s: any) => {
     if (s.predicted_condition) acc[s.predicted_condition] = (acc[s.predicted_condition] || 0) + 1; return acc;
-  }, {} as Record<string, number>);
-  const pieData = Object.entries(conditionFreq).map(([name, value]) => ({ name, value }));
+  }, {} as Record<string, numb(Object.entries(conditionFreq) as [string, number][]ct.entries(conditionFreq).map(([name, value]) => ({ name, value }));
 
   const cityFreq = data.reduce((acc: Record<string, Record<string, number>>, s) => {
     if (s.city) {
