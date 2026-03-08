@@ -16,14 +16,14 @@ const AdminCosts = () => {
 
   useEffect(() => { getCostAnalytics().then((d) => { setData(d); setLoading(false); }); }, []);
 
-  const byCondition = data.reduce((acc: Record<string, { total: number; count: number }>, c) => {
+  const byCondition = data.reduce((acc: Record<string, { total: number; count: number }>, c: any) => {
     if (!acc[c.condition]) acc[c.condition] = { total: 0, count: 0 };
     acc[c.condition].total += Number(c.estimated_cost);
     acc[c.condition].count += 1;
     return acc;
-  }, {});
-  const conditionData = Object.entries(byCondition).map(([name, { total, count }]) => ({
-    name, avgCost: Math.round(total / count), totalCost: total
+  }, {} as Record<string, { total: number; count: number }>);
+  const conditionData = Object.entries(byCondition).map(([name, v]) => ({
+    name, avgCost: Math.round(v.total / v.count), totalCost: v.total
   })).sort((a, b) => b.avgCost - a.avgCost);
 
   const byCity = data.reduce((acc: Record<string, { total: number; count: number }>, c) => {
