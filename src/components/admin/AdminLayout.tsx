@@ -72,7 +72,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       }
     });
   }, [navigate]);
-  };
 
   if (isAdmin === null) {
     return (
