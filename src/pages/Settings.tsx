@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Download, Trash2, Shield, AlertTriangle } from "lucide-react";
+import { Download, Trash2, Shield, AlertTriangle, CloudOff, WifiOff } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
+import { clearAllCache } from "@/lib/offlineStorage";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -152,6 +153,41 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Offline Data */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <WifiOff className="h-5 w-5 text-primary" />
+              Offline Data
+            </CardTitle>
+            <CardDescription>
+              MediBudget caches medical reference data locally so you can get estimates offline.
+              Data is encrypted and expires after 7 days.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between p-4 rounded-lg border border-border">
+              <div>
+                <p className="font-medium text-foreground">Clear Offline Health Data</p>
+                <p className="text-sm text-muted-foreground">
+                  Remove all locally cached medical data, symptom databases, and cost multipliers.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                className="gap-2 shrink-0"
+                onClick={async () => {
+                  await clearAllCache();
+                  toast.success("Offline data cleared successfully");
+                }}
+              >
+                <CloudOff className="h-4 w-4" />
+                Clear Cache
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Data Usage Info */}
         <Card>
           <CardHeader>
@@ -162,6 +198,7 @@ const Settings = () => {
             <p>• Cost estimation data is used to improve pricing accuracy.</p>
             <p>• We never sell your data to third parties.</p>
             <p>• All data is encrypted in transit and at rest.</p>
+            <p>• Offline cached data is obfuscated and tamper-protected on your device.</p>
             <p>
               Read our full{" "}
               <a href="/privacy" className="text-primary underline">Privacy Policy</a>.

@@ -25,6 +25,9 @@ import {
   generateDailyHealthTip,
   generateCheckupReminder,
 } from "@/lib/notificationService";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useOfflineSync } from "@/hooks/useOfflineSync";
+import { OfflineBanner } from "@/components/offline/OfflineBanner";
 
 interface Props {
   children: ReactNode;
@@ -47,6 +50,8 @@ const DashboardLayout = ({ children }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { isOnline, wasOffline } = useNetworkStatus();
+  const { syncNow } = useOfflineSync();
 
   // Generate daily tips & checkup reminders on mount
   useEffect(() => {
@@ -116,7 +121,9 @@ const DashboardLayout = ({ children }: Props) => {
   );
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex flex-col">
+      <OfflineBanner isOnline={isOnline} wasOffline={wasOffline} onRefresh={syncNow} />
+      <div className="flex flex-1">
       {/* Notification Center */}
       <NotificationCenter
         open={notifOpen}
@@ -165,6 +172,7 @@ const DashboardLayout = ({ children }: Props) => {
         <main className="p-4 md:p-8 max-w-5xl">
           {children}
         </main>
+      </div>
       </div>
     </div>
   );
