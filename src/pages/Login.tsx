@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Pill, Mail, Lock, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { checkIsAdmin } from "@/lib/adminService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -21,9 +22,19 @@ const Login = () => {
     }
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
     if (error) {
-      toast.error(error.message);
+      setLoading(false);
+      toast.error("Invalid email or password.");
+      return;
+    }
+
+    // Check if user is admin and redirect accordingly
+    const isAdmin = await checkIsAdmin();
+    setLoading(false);
+
+    if (isAdmin) {
+      toast.success("Welcome, Admin!");
+      navigate("/admin");
     } else {
       toast.success("Welcome back!");
       navigate("/dashboard");
