@@ -135,4 +135,21 @@ const MFAVerify = ({ onVerified }: MFAVerifyProps) => {
   );
 };
 
-export default MFAVerify;
+const MFAVerifyPage = () => {
+  const navigate = useNavigate();
+  
+  const handleVerified = async () => {
+    const isAdmin = await checkIsAdmin();
+    if (isAdmin) {
+      toast.success("Welcome, Admin!");
+      navigate("/admin", { replace: true });
+    } else {
+      toast.success("Welcome back!");
+      navigate("/dashboard", { replace: true });
+    }
+  };
+
+  return <MFAVerify onVerified={handleVerified} />;
+};
+
+export default MFAVerifyPage;
