@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Download, Trash2, Shield, AlertTriangle, CloudOff, WifiOff } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { clearAllCache } from "@/lib/offlineStorage";
+import { SecuritySettings } from "@/components/auth/SecuritySettings";
 import {
   AlertDialog,
   AlertDialogAction,
