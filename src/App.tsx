@@ -33,6 +33,9 @@ import ContactUs from "./pages/ContactUs";
 import FAQ from "./pages/FAQ";
 import Settings from "./pages/Settings";
 import Install from "./pages/Install";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import MFAVerify from "./pages/MFAVerify";
 import { AuthRedirectHandler } from "./components/auth/AuthRedirectHandler";
 
 const queryClient = new QueryClient();
