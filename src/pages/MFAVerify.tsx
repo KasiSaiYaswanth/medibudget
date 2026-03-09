@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useNavigate } from "react-router-dom";
 import { Pill, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { checkIsAdmin } from "@/lib/adminService";
 import { toast } from "sonner";
 
 interface MFAVerifyProps {
