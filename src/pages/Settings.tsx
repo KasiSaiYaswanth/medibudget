@@ -87,6 +87,8 @@ const Settings = () => {
           <h1 className="text-2xl font-bold text-foreground">Account Settings</h1>
           <p className="text-muted-foreground text-sm">Manage your account, privacy, and data</p>
         </div>
+        {/* Security Settings */}
+        <SecuritySettings />
 
         {/* Privacy & Data */}
         <Card>
