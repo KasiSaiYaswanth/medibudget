@@ -96,6 +96,7 @@ const Signup = () => {
               />
             </div>
             <PasswordStrengthMeter password={password} />
+            <Button variant="hero" className="w-full" type="submit" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           </form>
