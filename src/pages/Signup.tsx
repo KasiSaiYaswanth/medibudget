@@ -106,11 +106,23 @@ const Signup = () => {
           <Button
             variant="outline"
             className="w-full gap-2"
+            disabled={loading}
             onClick={async () => {
-              const { error } = await lovable.auth.signInWithOAuth("google", {
-                redirect_uri: window.location.origin,
-              });
-              if (error) toast.error("Google sign-up failed");
+              setLoading(true);
+              try {
+                const result = await lovable.auth.signInWithOAuth("google", {
+                  redirect_uri: window.location.origin,
+                });
+                if (result?.error) {
+                  console.error("Google OAuth error:", result.error);
+                  toast.error(result.error.message || "Google sign-up failed. Please try again.");
+                }
+              } catch (err: any) {
+                console.error("Google OAuth exception:", err);
+                toast.error(err?.message || "Google sign-up failed. Please try again.");
+              } finally {
+                setLoading(false);
+              }
             }}
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
