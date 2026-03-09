@@ -99,6 +99,16 @@ const Login = () => {
     setLockedUntil(0);
     setLoginState(0, 0);
 
+    // Check if MFA is enrolled
+    const { data: factorsData } = await supabase.auth.mfa.listFactors();
+    const hasVerifiedTotp = factorsData?.totp?.some((f) => f.status === "verified");
+
+    if (hasVerifiedTotp) {
+      setLoading(false);
+      navigate("/mfa-verify");
+      return;
+    }
+
     const isAdmin = await checkIsAdmin();
     setLoading(false);
 

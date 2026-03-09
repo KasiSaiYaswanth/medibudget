@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import { passwordSchema } from "@/lib/passwordValidation";
+import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -22,8 +24,9 @@ const Signup = () => {
       toast.error("Please fill in all fields");
       return;
     }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    const validation = passwordSchema.safeParse(password);
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
       return;
     }
     setLoading(true);
@@ -92,6 +95,7 @@ const Signup = () => {
                 className="pl-10"
               />
             </div>
+            <PasswordStrengthMeter password={password} />
             <Button variant="hero" className="w-full" type="submit" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>

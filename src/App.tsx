@@ -33,6 +33,9 @@ import ContactUs from "./pages/ContactUs";
 import FAQ from "./pages/FAQ";
 import Settings from "./pages/Settings";
 import Install from "./pages/Install";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import MFAVerify from "./pages/MFAVerify";
 import { AuthRedirectHandler } from "./components/auth/AuthRedirectHandler";
 
 const queryClient = new QueryClient();
@@ -48,6 +51,10 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/mfa-verify" element={<MFAVerify />} />
+
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/scanner" element={<MedicineScanner />} />
           <Route path="/estimate" element={<CostEstimation />} />

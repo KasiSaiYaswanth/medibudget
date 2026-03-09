@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Download, Trash2, Shield, AlertTriangle, CloudOff, WifiOff } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { clearAllCache } from "@/lib/offlineStorage";
+import { SecuritySettings } from "@/components/auth/SecuritySettings";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -86,6 +87,8 @@ const Settings = () => {
           <h1 className="text-2xl font-bold text-foreground">Account Settings</h1>
           <p className="text-muted-foreground text-sm">Manage your account, privacy, and data</p>
         </div>
+        {/* Security Settings */}
+        <SecuritySettings />
 
         {/* Privacy & Data */}
         <Card>
