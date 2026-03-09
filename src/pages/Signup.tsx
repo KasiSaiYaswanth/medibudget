@@ -24,8 +24,9 @@ const Signup = () => {
       toast.error("Please fill in all fields");
       return;
     }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    const validation = passwordSchema.safeParse(password);
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
       return;
     }
     setLoading(true);
