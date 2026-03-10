@@ -114,12 +114,10 @@ const Signup = () => {
             onClick={async () => {
               setLoading(true);
               try {
-                const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: window.location.origin,
-                });
-                if (result?.error) {
-                  console.error("Google OAuth error:", result.error);
-                  toast.error(result.error.message || "Google sign-up failed. Please try again.");
+                const { error } = await signInWithGoogle();
+                if (error) {
+                  console.error("Google OAuth error:", error);
+                  toast.error(error.message || "Google sign-up failed. Please try again.");
                 }
               } catch (err: any) {
                 console.error("Google OAuth exception:", err);
