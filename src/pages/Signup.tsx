@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Link, useNavigate } from "react-router-dom";
 import { Pill, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+import { signInWithGoogle } from "@/lib/googleAuth";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { passwordSchema } from "@/lib/passwordValidation";
@@ -114,12 +114,10 @@ const Signup = () => {
             onClick={async () => {
               setLoading(true);
               try {
-                const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: window.location.origin,
-                });
-                if (result?.error) {
-                  console.error("Google OAuth error:", result.error);
-                  toast.error(result.error.message || "Google sign-up failed. Please try again.");
+                const { error } = await signInWithGoogle();
+                if (error) {
+                  console.error("Google OAuth error:", error);
+                  toast.error(error.message || "Google sign-up failed. Please try again.");
                 }
               } catch (err: any) {
                 console.error("Google OAuth exception:", err);
