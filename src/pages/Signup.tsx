@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Link, useNavigate } from "react-router-dom";
 import { Pill, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { signInWithGoogle } from "@/lib/googleAuth";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { passwordSchema } from "@/lib/passwordValidation";
@@ -114,7 +113,12 @@ const Signup = () => {
             onClick={async () => {
               setLoading(true);
               try {
-                const { error } = await signInWithGoogle();
+                const { error } = await supabase.auth.signInWithOAuth({
+                  provider: "google",
+                  options: {
+                    redirectTo: window.location.origin,
+                  },
+                });
                 if (error) {
                   console.error("Google OAuth error:", error);
                   toast.error(error.message || "Google sign-up failed. Please try again.");
