@@ -100,6 +100,19 @@ const Signup = () => {
               />
             </div>
             <PasswordStrengthMeter password={password} />
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="password"
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            {confirmPassword && password !== confirmPassword && (
+              <p className="text-xs text-destructive">Passwords do not match</p>
+            )}
             <Button variant="hero" className="w-full" type="submit" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
