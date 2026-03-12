@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Pill, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Separator } from "@/components/ui/separator";
+
 import { passwordSchema } from "@/lib/passwordValidation";
 import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 
