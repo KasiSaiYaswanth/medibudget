@@ -14,13 +14,18 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !password.trim()) {
+    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       toast.error("Please fill in all fields");
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
     const validation = passwordSchema.safeParse(password);
@@ -88,13 +93,26 @@ const Signup = () => {
               <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 type="password"
-                placeholder="Password (min 6 characters)"
+                placeholder="Password (min 8 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10"
               />
             </div>
             <PasswordStrengthMeter password={password} />
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="password"
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            {confirmPassword && password !== confirmPassword && (
+              <p className="text-xs text-destructive">Passwords do not match</p>
+            )}
             <Button variant="hero" className="w-full" type="submit" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
