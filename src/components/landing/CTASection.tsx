@@ -15,12 +15,9 @@ const CTASection = () => {
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent)]" />
           <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary-foreground">
-              Take Control of Your Healthcare Costs
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-primary-foreground">
+              MediBudget
             </h2>
-            <p className="text-primary-foreground/80 max-w-xl mx-auto mb-8 text-lg">
-              Join thousands of users who estimate before they visit. Free to start, no credit card required.
-            </p>
             <Button
               size="lg"
               variant="secondary"
