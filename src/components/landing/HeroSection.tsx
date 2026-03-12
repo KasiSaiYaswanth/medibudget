@@ -20,9 +20,22 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
+            <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 mb-6">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-xs font-semibold text-secondary-foreground">
+                Trusted by 10,000+ users across India
+              </span>
+            </div>
+
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 text-foreground">
-              MediBudget
+              Estimate Before{" "}
+              <span className="text-gradient">You Visit</span>
             </h1>
+
+            <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
+              Know your medical costs upfront. Scan medicines, estimate treatments,
+              check government scheme eligibility — all in one platform.
+            </p>
 
             <div className="flex flex-wrap gap-4 mb-12">
               <Button variant="hero" size="lg" asChild>
@@ -43,12 +56,13 @@ const HeroSection = () => {
 
             <div className="flex items-center gap-6">
               {[
-                { icon: Scan },
-                { icon: TrendingDown },
-                { icon: Shield },
+                { icon: Scan, label: "Medicine Scanner" },
+                { icon: TrendingDown, label: "Cost Estimation" },
+                { icon: Shield, label: "Scheme Checker" },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
                   <item.icon className="h-4 w-4 text-primary" />
+                  <span>{item.label}</span>
                 </div>
               ))}
             </div>
