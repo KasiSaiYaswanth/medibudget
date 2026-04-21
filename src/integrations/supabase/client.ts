@@ -8,7 +8,19 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+// Fallback to placeholder strings to prevent the app from completely crashing with a blank screen
+// if the environment variables are missing during a production build (e.g., on Vercel)
+const url = SUPABASE_URL || "https://placeholder-project.supabase.co";
+const key = SUPABASE_PUBLISHABLE_KEY || "placeholder-key";
+
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  console.error(
+    "Supabase environment variables are missing! " +
+    "Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set in your environment (e.g., Vercel settings)."
+  );
+}
+
+export const supabase = createClient<Database>(url, key, {
   auth: {
     storage: localStorage,
     persistSession: true,
